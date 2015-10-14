@@ -1,0 +1,6 @@
+texture_rect=0 225 30 30
+initial_size=0.4 0.4
+start_color=1.0 1.0 1.0 1.0
+end_color=1.0 1.0 1.0 0.3
+min_rotation_speed=0.0
+max_rotation_speed=0.0

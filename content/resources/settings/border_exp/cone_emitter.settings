@@ -1,0 +1,6 @@
+radius=1
+count=6
+angle_variance=0.5
+start_angle=0
+end_angle=90
+radius_variance=0

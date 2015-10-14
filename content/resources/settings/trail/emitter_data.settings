@@ -1,0 +1,9 @@
+velocity=30
+velocity_variance=5
+ejection_period=0
+ejection_variance=0
+ejection_counter=30
+ttl=1.5
+ttl_variance=0.25
+size_x_variance=0.05
+size_y_variance=0.05
