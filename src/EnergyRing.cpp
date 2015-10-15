@@ -1,28 +1,34 @@
 #include "EnergyRing.h"
 #include <math\GameMath.h>
+#include <sprites\SpriteBatch.h>
+#include <utils\font.h>
 
+namespace EnergyRing {
 
-EnergyRing::EnergyRing(const v2& center) : m_Center(center) {
-}
+	void draw(const v2& center, int percentage, const ds::Color& color) {
+		float angle = 0.0f;
+		uint32 steps = percentage / 5;
+		float r1 = 60.0f;
+		float step = DEGTORAD(360.0f / 20.0f);
+		char buffer[10];
+		sprintf_s(buffer, 10, "%d", percentage);
+		v2 size = ds::sprites::getTextSize(buffer);
+		int cx = center.x - size.x * 0.5f;
+		int cy = center.y - size.y * 0.5f;
+		ds::sprites::drawText(cx, cy, buffer);
+		
+		for (uint32 i = 0; i < steps; ++i) {
+			float x = center.x + cos(angle) * r1;
+			float y = center.y + sin(angle) * r1;
+			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 12, 12)), angle, 1.0f, 1.0f, color);
+			angle += step;
+		}
+		for (uint32 i = steps; i < 20; ++i) {
+			float x = center.x + cos(angle) * r1;
+			float y = center.y + sin(angle) * r1;
+			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 12, 12)), angle, 1.0f, 1.0f, ds::Color(32,32,32,255));
+			angle += step;
+		}
+	}
 
-
-EnergyRing::~EnergyRing(void) {
-}
-
-void EnergyRing::draw(int percentage) {
-	float angle = 0.0f;
-	uint32 steps = percentage / 4;
-	float r1 = 60.0f;
-	float r2 = r1 + 20.0f;
-	float step = 360.0f / 25.0f;
-	//m_SpriteBatch->draw(m_Center.x,m_Center.y,ds::Rect(700,0,155,155));
-	for ( uint32 i = 0; i < steps; ++i ) {
-		float alpha2 = angle + step;			
-		float x = m_Center.x + cos(DEGTORAD(angle)) * r1;
-		float y = m_Center.y + sin(DEGTORAD(angle)) * r1;
-		float ra = ds::math::reflect(DEGTORAD(angle));
-		//m_SpriteBatch->draw(x,y,ds::Rect(75,0,12,12),ra,1.0f,1.0f,ds::Color(192,0,0,255));
-
-		angle += step;
-	}	
 }

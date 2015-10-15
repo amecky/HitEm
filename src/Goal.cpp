@@ -8,16 +8,19 @@ Goal::Goal(void) {
 Goal::~Goal(void) {
 }
 
-void Goal::init() {
+void Goal::init(GoalOrientation orientation) {
 	float angle = 0.0f;
 	for ( int j = 0; j < MAX_ITEMS; ++j ) {
 		Item* item = &m_Items[j];
 		item->dir = 0;
 		item->angle = 0.0f;
-		//m_World->addSpriteEntity(0,0,&item->entity,170,290+10.0*j,ds::Rect(30,320,40,10));		
+		item->scale = v2(1, 1);
+		item->texture = ds::math::buildTexture(30, 320, 40, 10);
+		item->position = v2(170, 290 + 10.0*j);
 		item->angle = angle;
 		angle += 40.0f;
 	}
+	/*
 	for ( int j = 0; j < MAX_ITEMS; ++j ) {
 		Item* item = &m_Items[j+MAX_ITEMS];
 		item->dir = 0;
@@ -42,10 +45,11 @@ void Goal::init() {
 		item->angle = angle;
 		angle += 40.0f;
 	}
+	*/
 }
 
 void Goal::update(float elapsed) {
-	for ( int j = 0; j < MAX_ITEMS*4; ++j ) {
+	for ( int j = 0; j < MAX_ITEMS; ++j ) {
 		Item* item = &m_Items[j];
 		float sx = 0.8f + sin(DEGTORAD(item->angle)) * 0.15f;
 		item->angle += 360.0f * elapsed * 2.5f;			
@@ -53,10 +57,17 @@ void Goal::update(float elapsed) {
 			item->angle -= 360.0f;
 		}
 		if ( item->dir == 0 ) {
-			//item->entity.setScale(sx,1.0f);
+			item->scale.x = sx;
 		}
 		else {
-			//item->entity.setScale(1.0f,sx);
+			item->scale.y = sx;
 		}
+	}
+}
+
+void Goal::render() {
+	for (int j = 0; j < MAX_ITEMS; ++j) {
+		Item* item = &m_Items[j];
+		ds::sprites::draw(item->position, item->texture, 0.0f, item->scale.x, item->scale.y);
 	}
 }

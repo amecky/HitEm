@@ -1,13 +1,10 @@
 #pragma once
 #include <Vector.h>
+#include <utils\Color.h>
 
-class EnergyRing {
+namespace EnergyRing {
 
-public:
-	EnergyRing(const v2& center);
-	~EnergyRing(void);
-	void draw(int percentage);
-private:
-	v2 m_Center;	
+	void draw(const v2& center,int percentage,const ds::Color& color);
+
 };
 

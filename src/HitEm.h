@@ -19,6 +19,11 @@ enum BallMode {
 	BM_GROWING
 };
 
+struct Bat {
+	v2 position;
+	ds::Texture texture;
+};
+
 struct Ball {
 	v2 velocity;
 	v2 position;
@@ -63,11 +68,14 @@ private:
 	int m_ObjectsHandle;
 
 	
-	EnergyRing* m_RedRing;
-	EnergyRing* m_GreenRing;
 	//BounceParticlesystem* m_BounceParticles;
 
 	Ball _balls[4];
+	bool _showBalls;
+
+	int _percentage[4];
+	Goal _redGoal;
+
 	v2 _startPos;
 	int _state;
 	GameSettings* _gameSettings;
@@ -75,8 +83,6 @@ private:
 	int _settingsState;
 	//Bat m_Bat;
 	ds::BitmapFont* m_BitmapFont;
-	//HUD* m_HUD;
-	//ds::PostProcessor* m_PostProcessor;
 	uint32 m_AddBlendState;
 	uint32 m_DefaultBS;
 	Ball* m_StickyBall;
