@@ -9,16 +9,18 @@ HitEm::HitEm() : ds::BaseApp() {
 	_settings.screenWidth = 1024;
 	_settings.screenHeight = 768;
 	_settings.clearColor = ds::Color(10,10,10,255);	
-	m_StickyBall = 0;
 	_gameSettings = new GameSettings;
-	_settingsPos = v2(820, 740);
+	_settingsPos = v2(720, 740);
 	_settingsState = 1;
 	_state = 1;
-	_startPos = v2(20, 740);
-
+	_startPos = v2(20, 580);
+	_trails = new Trails(_gameSettings);
+	_showSettings = false;
+	_tickEnergy = false;
 }
 
 HitEm::~HitEm() {
+	delete _trails;
 	delete _gameSettings;
 }
 
@@ -34,46 +36,136 @@ bool HitEm::loadContent() {
 	settings::load(_gameSettings);
 	_showBalls = false;
 	createBall(0);
-	//createBall(1);
-	//createBall(2);
-	//createBall(3);
+	createBall(1);
+	createBall(2);
+	createBall(3);
 	for (int i = 0; i < 4; ++i) {
-		_percentage[i] = 100;
+		_energies[i].index = i;
+		_energies[i].value = 100;
+		_energies[i].timer = 0.0f;
 	}
+	_bat.position = v2(512, 384);
+	_bat.texture = ds::math::buildTexture(375, 63, 52, 52);
 	_redGoal.init(GO_VERTICAL);
 	return true;
 }
 
-// -------------------------------------------------------
-// Update
-// -------------------------------------------------------
-void HitEm::update(float dt) {
-	/*
-	v2 mp = getMousePos();
-	//m_Bat.position = mp;
-	float angle = 0.0f;
-	mp.y = 768.0f - mp.y;
-	ds::Vec2 bp = m_Bat.getPosition();
-	ds::math::follow(mp,bp,&angle,2.0f,5.0f*gameTime.elapsed);
-	m_Bat.setPosition(bp);
-	m_Catcher.setPosition(bp);
-	*/
-	_redGoal.update(dt);
-
+void HitEm::moveBalls(float dt) {
 	if (_showBalls) {
 		for (int i = 0; i < 4; ++i) {
 			Ball& b = _balls[i];
 			if (!b.sticky) {
 				if (b.mode == BM_GROWING) {
 					b.timer += dt;
-					float norm = b.timer / BALL_GROW_TTL;
+					float norm = b.timer / _gameSettings->ballGrowTTL;
 					b.scale = 0.1f + norm * 0.9f;
-					if (b.timer >= BALL_GROW_TTL) {
+					if (b.timer >= _gameSettings->ballGrowTTL) {
 						b.mode = BM_FLYING;
 						b.scale = 1.0f;
 					}
 				}
 				else {
+
+					if (sqr_length(b.prev - b.position) > (_gameSettings->trailDistance * _gameSettings->trailDistance)) {
+						TrailSettings s;
+						s.position = b.prev;
+						s.color = COLORS[b.colorIndex];
+						s.count = 6;
+						s.angle = 0.0f;
+						_trails->emit(s);
+						b.prev = b.position;
+					}
+					b.position += b.velocity * dt;
+					bool push = false;
+					if (b.position.x < 180.0f || b.position.x > 840.0f) {
+						b.velocity.x *= -1.0f;
+						push = true;
+					}
+					if (b.position.y < 60.0f || b.position.y > 720.0f) {
+						b.velocity.y *= -1.0f;
+						push = true;
+					}
+					if (push) {
+						b.position += b.velocity * dt;
+					}
+					v2 diff = b.position - _bat.position;
+					if ( sqr_length(diff) <= (( BALL_RADIUS+PLAYER_RADIUS) * (BALL_RADIUS+PLAYER_RADIUS)) ) {
+						v2 norm = normalize(diff);
+						v2 pushBack = ds::math::getShiftVector(b.position,BALL_RADIUS,_bat.position,PLAYER_RADIUS+2.0f);
+						pushBack *= 1.1f;
+						b.position = b.position + pushBack;
+						b.velocity = reflect(b.velocity,norm);
+					}
+				}
+			}
+			// sticky ball
+			else {
+				//b.entity.setPosition(m_Bat.getPosition());
+				//ds::Vec2 bp = b.entity.getPosition();
+				//b.angle += DEGTORAD(270.0f) * gameTime.elapsed;
+				//ds::vector::addRadial(bp,40.0f,b.angle);
+				//b.entity.setPosition(bp);
+			}
+		}
+	}
+}
+// -------------------------------------------------------
+// Update
+// -------------------------------------------------------
+void HitEm::update(float dt) {
+	
+	v2 mp = getMousePos();
+	//m_Bat.position = mp;
+	float angle = 0.0f;
+	mp.y = 768.0f - mp.y;
+	v2 bp = _bat.position;
+	ds::math::follow(mp,bp,&angle,2.0f,5.0f*dt);
+	if (bp.x > 200.0f && bp.x < 820.0f && bp.y > 80.0f && bp.y < 700.0f) {
+		_bat.position = bp;
+	}
+	
+
+	_redGoal.update(dt);
+
+	_trails->update(dt);
+
+	moveBalls(dt);
+
+	if (_tickEnergy) {
+		for (int i = 0; i < 4; ++i) {
+			_energies[i].timer += dt;
+			if (_energies[i].timer >= 1.0f) {
+				_energies[i].timer -= 1.0f;
+				--_energies[i].value;
+			}
+		}
+	}
+	/*
+	if (_showBalls) {
+		for (int i = 0; i < 4; ++i) {
+			Ball& b = _balls[i];
+			if (!b.sticky) {
+				if (b.mode == BM_GROWING) {
+					b.timer += dt;
+					float norm = b.timer / _gameSettings->ballGrowTTL;
+					b.scale = 0.1f + norm * 0.9f;
+					if (b.timer >= _gameSettings->ballGrowTTL) {
+						b.mode = BM_FLYING;
+						b.scale = 1.0f;
+					}
+				}
+				else {
+
+					if (sqr_length(b.prev - b.position) > (_gameSettings->trailDistance * _gameSettings->trailDistance)) {
+						TrailSettings s;
+						s.position = b.prev;
+						s.color = COLORS[b.colorIndex];
+						s.count = 6;
+						s.angle = 0.0f;
+						_trails->emit(s);
+						b.prev = b.position;
+					}
+
 					b.position += b.velocity * dt;
 					float mx = b.position.x - CENTER_X;
 					float my = b.position.y - CENTER_Y;
@@ -129,6 +221,7 @@ void HitEm::update(float dt) {
 			}
 		}
 	}
+	*/
 	/*
 	for ( int i = 0; i < 4; ++i ) {
 		m_Goals[i]->update(gameTime.elapsed);
@@ -162,23 +255,27 @@ bool HitEm::isOutside(const v2& pos) {
 // -------------------------------------------------------
 void HitEm::draw() {
 	ds::sprites::draw(v2(CENTER_X,CENTER_Y),ds::math::buildTexture(ds::Rect(300,400,400,400)),0.0f,2.0f,2.0f);
+	_trails->render();
 	if (_showBalls) {
 		for (int i = 0; i < 4; ++i) {
 			Ball& ball = _balls[i];
 			ds::sprites::draw(ball.position, ball.texture, 0.0f, ball.scale, ball.scale);
 		}
 	}
-	EnergyRing::draw(v2(80, 680), _percentage[0], ds::Color(192, 0, 0, 255)); // red
-	EnergyRing::draw(v2(80, 80), _percentage[1], ds::Color(0, 192, 0, 255)); // green
-	EnergyRing::draw(v2(940, 680), _percentage[2], ds::Color(0, 0, 192, 255)); // blue
-	EnergyRing::draw(v2(940, 80), _percentage[3], ds::Color(192, 192, 0, 255)); // yellow
+	ds::sprites::draw(_bat.position, _bat.texture);
+
+	EnergyRing::draw(v2(80, 680), _energies[0].value, ds::Color(192, 0, 0, 255)); // red
+	EnergyRing::draw(v2(80, 80), _energies[1].value, ds::Color(0, 192, 0, 255)); // green
+	EnergyRing::draw(v2(940, 680), _energies[2].value, ds::Color(0, 0, 192, 255)); // blue
+	EnergyRing::draw(v2(940, 80), _energies[3].value, ds::Color(192, 192, 0, 255)); // yellow
 
 	_redGoal.render();
+	
 	
 	gui::start(1, &_startPos);
 	if (gui::begin("Test", &_state)) {
 		gui::CheckBox(5, "Show Balls", &_showBalls);
-		gui::InputInt(6, "Red Percentage", &_percentage[0], 0, 100, 5);
+		gui::CheckBox(7, "Tick energy", &_tickEnergy);
 		if (gui::Button(1, "Respawn 1")) {
 			respawn(0);
 		}
@@ -191,10 +288,19 @@ void HitEm::draw() {
 		if (gui::Button(4, "Respawn 4")) {
 			respawn(3);
 		}
+		if (gui::Button(6, "Emitt trail")) {
+			TrailSettings s;
+			s.position = v2(512, 384);
+			s.color = ds::Color(255, 0, 0, 255);
+			s.count = 6;
+			s.angle = 0.0f;
+			_trails->emit(s);
+		}
 	}
 	gui::end();
-	
-	settings::showDialog(_gameSettings, &_settingsPos, &_settingsState);
+	if (_showSettings) {
+		settings::showDialog(_gameSettings, &_settingsPos, &_settingsState);
+	}
 }
 
 // -------------------------------------------------------
@@ -206,6 +312,7 @@ void HitEm::respawn(int index) {
 	float xp = CENTER_X + (RING_RADIUS - BALL_SIZE) * cos(DEGTORAD(angle));
 	float yp = CENTER_Y + (RING_RADIUS - BALL_SIZE) * sin(DEGTORAD(angle));
 	ball.position = v2(xp,yp);
+	ball.prev = v2(xp, yp);
 	angle += 180.0f;
 	float vx = _gameSettings->ballVelocity * cos(DEGTORAD(angle));
 	float vy = _gameSettings->ballVelocity * sin(DEGTORAD(angle));
@@ -225,23 +332,6 @@ void HitEm::createBall(int colorIndex) {
 	b.sticky = false;
 	b.texture = ds::math::buildTexture(BALL_TEXTURES[colorIndex]);
 	respawn(colorIndex);
-	/*
-	float angle = getRandomAngle(colorIndex);
-	float xp = 512 + (RING_RADIUS - BALL_SIZE) * cos(DEGTORAD(angle));
-	float yp = 384 + (RING_RADIUS - BALL_SIZE) * sin(DEGTORAD(angle));
-	
-	angle += 180.0f;
-	float vx = BALL_VELOCITY * cos(DEGTORAD(angle));
-	float vy = BALL_VELOCITY * sin(DEGTORAD(angle));
-	b.velocity = ds::Vec2(vx,vy);
-	b.entity.setPosition(ds::Vec2(xp,yp));
-	b.mode = BM_GROWING;
-	b.timer = 0.0f;
-	b.colorIndex = colorIndex;
-	b.sticky = false;
-	b.angle = angle;
-	//b.scale = 1.0f;
-	*/
 }
 
 // -------------------------------------------------------
@@ -314,55 +404,16 @@ float HitEm::getRandomAngle(int sector) {
 // On button down
 // -------------------------------------------------------
 void HitEm::OnButtonDown( int button,int x,int y ) {
-	/*
-	// if no ball is sticky
-	if ( !m_Catcher.isActive()) {
-		m_Catcher.setActive(true);
-	}
-	 if ( m_StickyBall == 0 ) {
-		 for ( int i = 0; i < 4; ++i ) {
-			 Ball* b = &m_Balls[i];
-			 if ( b.mode != BM_GROWING ) {				 
-				ds::Vec2 diff = b.entity.getPosition() - m_Bat.getPosition();
-				if ( ds::vector::sqrLength(diff) <= (( BALL_RADIUS+PLAYER_RADIUS) * (BALL_RADIUS+PLAYER_RADIUS)) * 8.0f) {
-					if ( m_StickyBall == 0 ) {
-						b.angle = ds::math::getTargetAngle(m_Bat.getPosition(),b.entity.getPosition());
-						b.sticky = true;
-						m_StickyBall = b;
-					}
-				}
-			 }
-		 }
-	 }
-	 */
 }
 
 // -------------------------------------------------------
 // On button up
 // -------------------------------------------------------
 void HitEm::OnButtonUp( int button,int x,int y ) {
-	/*
-	// if there actually is a sticky ball
-	if ( m_StickyBall != 0 ) {
-		m_StickyBall->sticky = false;
-		m_StickyBall->velocity = ds::math::getRadialVelocity(RADTODEG(m_StickyBall->angle),300.0f);
-		// release it and set new velocity
-		m_StickyBall = 0;
-		m_Catcher.setActive(false);
-	}
-
-	ds::Vec2 mp = getMousePos();
-	mp.y = 768.0f - mp.y;
-	ds::Vec2 v;
-	v.x = mp.x - CENTER_X;
-	v.y = mp.y - CENTER_Y;
-	float da = ds::math::getAngle(ds::vector::normalize(v),ds::Vec2(1,0));
-	LOG(logINFO) << "clicked da: " << RADTODEG(da);
-	*/
 }
 
 void HitEm::OnChar( char ascii,unsigned int keyState ) {
-	if ( ascii == 'a' ) {
-		//m_BorderExp.start(ds::Vec2(400,400));
+	if ( ascii == 's' ) {
+		_showSettings = !_showSettings;
 	}
 }

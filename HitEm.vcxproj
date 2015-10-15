@@ -228,6 +228,7 @@
     <ClCompile Include="src\GameSettings.cpp" />
     <ClCompile Include="src\Goal.cpp" />
     <ClCompile Include="src\HitEm.cpp" />
+    <ClCompile Include="src\Trails.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
@@ -236,6 +237,7 @@
     <ClInclude Include="src\GameSettings.h" />
     <ClInclude Include="src\Goal.h" />
     <ClInclude Include="src\HitEm.h" />
+    <ClInclude Include="src\Trails.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="HitEm.manifest" />

@@ -11,6 +11,7 @@
 #include "EnergyRing.h"
 #include "Goal.h"
 #include "GameSettings.h"
+#include "Trails.h"
 
 class HitEm : public ds::BaseApp {
 
@@ -24,9 +25,18 @@ struct Bat {
 	ds::Texture texture;
 };
 
+struct Energy {
+
+	int index;
+	int value;
+	float timer;
+
+};
+
 struct Ball {
 	v2 velocity;
 	v2 position;
+	v2 prev;
 	int colorIndex;
 	BallMode mode;
 	float timer;
@@ -56,35 +66,21 @@ private:
 	bool check2D(v2 ballPos,int x2,int y2,int w2,int h2);
 	void respawn(int index);
 	v2 reflect(const v2& vel,const v2& norm);
-	
-
-	
-	Goal m_Goal;
-	
-
-	int m_Mtrl;
-	int m_BackgroundHandle;
-	int m_RingHandle;
-	int m_ObjectsHandle;
-
-	
-	//BounceParticlesystem* m_BounceParticles;
+	void moveBalls(float dt);
+	void handleEnergy(float dt);
 
 	Ball _balls[4];
 	bool _showBalls;
-
-	int _percentage[4];
+	bool _tickEnergy;
+	Energy _energies[4];
 	Goal _redGoal;
-
 	v2 _startPos;
 	int _state;
 	GameSettings* _gameSettings;
 	v2 _settingsPos;
 	int _settingsState;
-	//Bat m_Bat;
-	ds::BitmapFont* m_BitmapFont;
-	uint32 m_AddBlendState;
-	uint32 m_DefaultBS;
-	Ball* m_StickyBall;
-	uint32 m_OuterRingIdx;
+	bool _showSettings;
+	Trails* _trails;
+	Bat _bat;
+
 };
