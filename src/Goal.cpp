@@ -15,7 +15,7 @@ void Goal::init(GoalOrientation orientation) {
 		item->dir = 0;
 		item->angle = 0.0f;
 		item->scale = v2(1, 1);
-		item->texture = ds::math::buildTexture(30, 320, 40, 10);
+		item->texture = ds::math::buildTexture(0, 320, 40, 10);
 		item->position = v2(170, 290 + 10.0*j);
 		item->angle = angle;
 		angle += 40.0f;

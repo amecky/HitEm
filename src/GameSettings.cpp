@@ -28,6 +28,7 @@ namespace settings {
 			gui::InputVec2(26, "Trail MAX", &settings->trailMaxSize);
 			gui::InputFloat(27, "Trail Dist", &settings->trailDistance);
 			gui::InputVec2(29, "Trail Radius", &settings->trailRadius);
+			gui::InputFloat(30, "Prepare timer", &settings->prepareMatchTime);
 			gui::beginGroup();
 			if (gui::Button(22, "Save")) {
 				LOG << "Save pressed";

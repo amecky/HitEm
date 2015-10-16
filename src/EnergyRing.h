@@ -2,9 +2,18 @@
 #include <Vector.h>
 #include <utils\Color.h>
 
-namespace EnergyRing {
+struct EnergyRing {
 
-	void draw(const v2& center,int percentage,const ds::Color& color);
+	int value;
+	int colorIndex;
+	float timer;
+
+	EnergyRing() {}
+	~EnergyRing() {}
+	
+	void draw(const v2& center);
+
+	bool tick(float dt);
 
 };
 

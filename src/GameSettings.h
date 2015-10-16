@@ -11,6 +11,7 @@ struct GameSettings {
 	v2 trailMaxSize;
 	float trailDistance;
 	v2 trailRadius;
+	float prepareMatchTime;
 
 	GameSettings() {
 		ballVelocity = 400.0f;
@@ -20,6 +21,7 @@ struct GameSettings {
 		trailMaxSize = v2(0.2f, 0.2f);
 		trailDistance = 15.0f;
 		trailRadius = v2(4, 8);
+		prepareMatchTime = 2.0f;
 	}
 
 };
