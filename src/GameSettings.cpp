@@ -20,8 +20,14 @@ namespace settings {
 
 	void showDialog(GameSettings* settings, v2* pos, int* states) {
 		gui::start(20, pos);
-		if (gui::begin("Ball", &states[0])) {
+		if (gui::begin("Settings", &states[0])) {
 			gui::InputFloat(21, "Velocity", &settings->ballVelocity);
+			gui::InputFloat(28, "Grow TTL", &settings->ballGrowTTL);			
+			gui::InputFloat(24, "Trail TTL", &settings->trailTTL);
+			gui::InputVec2(25, "Trail MIN", &settings->trailMinSize);
+			gui::InputVec2(26, "Trail MAX", &settings->trailMaxSize);
+			gui::InputFloat(27, "Trail Dist", &settings->trailDistance);
+			gui::InputVec2(29, "Trail Radius", &settings->trailRadius);
 			gui::beginGroup();
 			if (gui::Button(22, "Save")) {
 				LOG << "Save pressed";

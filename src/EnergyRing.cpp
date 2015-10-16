@@ -20,13 +20,13 @@ namespace EnergyRing {
 		for (uint32 i = 0; i < steps; ++i) {
 			float x = center.x + cos(angle) * r1;
 			float y = center.y + sin(angle) * r1;
-			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 12, 12)), angle, 1.0f, 1.0f, color);
+			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 10, 14)), angle, 1.0f, 1.0f, color);
 			angle += step;
 		}
 		for (uint32 i = steps; i < 20; ++i) {
 			float x = center.x + cos(angle) * r1;
 			float y = center.y + sin(angle) * r1;
-			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 12, 12)), angle, 1.0f, 1.0f, ds::Color(32,32,32,255));
+			ds::sprites::draw(v2(x, y), ds::math::buildTexture(ds::Rect(75, 0, 10, 14)), angle, 1.0f, 1.0f, ds::Color(32,32,32,255));
 			angle += step;
 		}
 	}
