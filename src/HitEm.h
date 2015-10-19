@@ -9,8 +9,8 @@
 #include "dxstdafx.h"
 #include <renderer\render_types.h>
 #include "EnergyRing.h"
-#include "Goal.h"
 #include "GameSettings.h"
+#include "GameContext.h"
 
 class HitEm : public ds::BaseApp {
 
@@ -26,6 +26,6 @@ public:
 	void update(float dt);
 	void draw();
 private:
-	Goal _redGoal;
 	GameSettings* _gameSettings;
+	GameContext* _context;
 };

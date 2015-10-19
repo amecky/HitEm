@@ -5,12 +5,13 @@
 #include "..\EnergyRing.h"
 #include "..\GameSettings.h"
 #include "..\Trails.h"
+#include "..\Goal.h"
 
 class MainGameState : public ds::GameState {
 
 enum GameMode {
 	GM_PREPARING,
-	GM_RUNNING
+	GM_RUNNING	
 };
 
 struct Bat {
@@ -20,7 +21,8 @@ struct Bat {
 
 enum BallMode {
 	BM_FLYING,
-	BM_GROWING
+	BM_GROWING,
+	BM_STICKY
 };
 
 struct Score {
@@ -71,5 +73,7 @@ private:
 	Score _score;
 	GameMode _mode;
 	float _timer;
+	bool _showGoals;
+	Goal _goals[4];
 };
 

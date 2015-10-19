@@ -1,5 +1,6 @@
 #pragma once
 #include <utils\Color.h>
+#include <renderer\render_types.h>
 
 const ds::Color CL_BLUE = ds::Color(0.0f,0.5f,1.0f,1.0f);
 const ds::Color CL_ORANGE = ds::Color(1.0f,0.5f,0.0f,1.0f);

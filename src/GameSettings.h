@@ -1,6 +1,8 @@
 #pragma once
 #include <Vector.h>
+#define INTROSPECT(PARAMS)
 
+INTROSPECT(category:"Settings")
 struct GameSettings {
 
 	float ballVelocity;

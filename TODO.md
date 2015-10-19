@@ -1,9 +1,16 @@
 # TODO
 
-- [ ] add border iomport impact effect
-- [ ] add four goals
+- [ ] flash color of text inside energy ring when value incremented
+- [ ] add border import impact effect
 - [ ] scoring particle effect
-- [ ] add "get ready" message and timer before game starts
+- [ ] check if all energies are 0 and then game over
+- [ ] add game over state
+- [ ] calculate score: 1000 * correct goals - 100 * wrong goals + (Time - 100) * 1000 
+
+## 19.10.2015
+- [x] "get ready" should fade out
+- [x] add four goals
+- [x] add "get ready" message and timer before game starts
 
 ## 16.10.2015
 - [x] decrease enegery if wrong goal - No. Already difficult enough

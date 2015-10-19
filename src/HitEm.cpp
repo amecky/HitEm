@@ -4,6 +4,7 @@
 #include <sprites\SpriteBatch.h>
 #include <base\GameStateMachine.h>
 #include "gamestates\MainGameState.h"
+#include "gamestates\GameOverState.h"
 
 ds::BaseApp *app = new HitEm(); 
 
@@ -12,9 +13,11 @@ HitEm::HitEm() : ds::BaseApp() {
 	_settings.screenHeight = 768;
 	_settings.clearColor = ds::Color(10,10,10,255);	
 	_gameSettings = new GameSettings;
+	_context = new GameContext;
 }
 
 HitEm::~HitEm() {
+	delete _context;
 	delete _gameSettings;
 }
 
@@ -27,13 +30,15 @@ bool HitEm::loadContent() {
 	ds::sprites::initializeTextSystem(texture, "xscale");
 	gui::initialize();
 	settings::load(_gameSettings);
+	initializeGUI();
 	stateMachine->add(new MainGameState(_gameSettings));
-	_redGoal.init(GO_VERTICAL);
+	stateMachine->add(new GameOverState(&gui,_context));
+	stateMachine->connect("GameOver", 1, "MainGame");
 	return true;
 }
 
 void HitEm::init() {
-	stateMachine->activate("MainGame");
+	stateMachine->activate("GameOver");
 }
 
 
@@ -41,7 +46,6 @@ void HitEm::init() {
 // Update
 // -------------------------------------------------------
 void HitEm::update(float dt) {
-	_redGoal.update(dt);
 	/*
 	if (_showBalls) {
 		for (int i = 0; i < 4; ++i) {
@@ -135,6 +139,5 @@ void HitEm::update(float dt) {
 // Draw
 // -------------------------------------------------------
 void HitEm::draw() {
-	ds::sprites::draw(v2(CENTER_X,CENTER_Y),ds::math::buildTexture(ds::Rect(300,400,400,400)),0.0f,2.0f,2.0f);
-	_redGoal.render();
+	
 }

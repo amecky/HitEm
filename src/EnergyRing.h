@@ -15,5 +15,7 @@ struct EnergyRing {
 
 	bool tick(float dt);
 
+	void inc(int v);
+
 };
 

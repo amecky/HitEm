@@ -24,9 +24,13 @@ public:
 	Goal(void);
 	~Goal(void);
 	void update(float elapsed);
-	void init(GoalOrientation orientation);
+	void init(const v2& pos,GoalOrientation orientation);
 	void render();
+	bool checkIntersection(const v2& ballPos);
 private:
 	Item m_Items[MAX_ITEMS];
+	GoalOrientation _orientation;
+	v2 _position;
+	v2 _dimension;
 };
 

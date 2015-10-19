@@ -36,5 +36,15 @@ bool EnergyRing::tick(float dt) {
 		timer -= 1.0f;
 		--value;
 	}
+	if (value < 0) {
+		value = 0;
+	}
 	return value > 0;
+}
+
+void EnergyRing::inc(int v) {
+	value += v;
+	if (value > 100) {
+		value = 100;
+	}
 }
