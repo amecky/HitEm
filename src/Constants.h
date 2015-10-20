@@ -8,8 +8,8 @@ const ds::Color CL_ORANGE = ds::Color(1.0f,0.5f,0.0f,1.0f);
 const float CENTER_X = 512.0f;
 const float CENTER_Y = 384.0f;
 const float RING_RADIUS = 350.0f;
-const float BALL_RADIUS = 16.0f;
-const float PLAYER_RADIUS = 20.0f;
+const float BALL_RADIUS = 14.0f;
+const float PLAYER_RADIUS = 25.0f;
 const float HALF_SIZE = 16.0f;
 const float BALL_SIZE = 32.0f;
 
@@ -28,11 +28,3 @@ const ds::Rect GOAL_RECTS[] = {ds::Rect(32,160,30,20),ds::Rect(32,192,20,30),ds:
 const ds::Rect BALL_TEXTURES[] = { ds::Rect(300, 0, 26, 26), ds::Rect(300, 52, 26, 26), ds::Rect(300, 78, 26, 26), ds::Rect(300, 26, 26, 26) };
 
 
-struct Score {
-	int points;
-	int seconds;
-	int minutes;
-	int goals;
-	int wrongGoals;
-	int sticky;
-};

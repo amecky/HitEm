@@ -84,12 +84,14 @@ void Goal::render() {
 		ds::sprites::draw(item->position, item->texture, 0.0f, item->scale.x, item->scale.y);
 	}
 	*/
+	/*
 	if (_orientation == GO_VERTICAL) {
 		ds::sprites::draw(_position, ds::math::buildTexture(0.0f, 525.0f, _dimension.x, _dimension.y));
 	}
 	else {
 		ds::sprites::draw(_position, ds::math::buildTexture(0.0f, 500.0f, _dimension.x, _dimension.y));
 	}
+	*/
 }
 
 bool Goal::checkIntersection(const v2& ballPos) {

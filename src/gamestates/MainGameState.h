@@ -6,6 +6,8 @@
 #include "..\GameSettings.h"
 #include "..\Trails.h"
 #include "..\Goal.h"
+#include "..\GameContext.h"
+
 
 class MainGameState : public ds::GameState {
 
@@ -25,11 +27,6 @@ enum BallMode {
 	BM_STICKY
 };
 
-struct Score {
-	int correct;
-	int wrong;
-};
-
 struct Ball {
 	v2 velocity;
 	v2 position;
@@ -43,7 +40,7 @@ struct Ball {
 };
 
 public:
-	MainGameState(GameSettings* settings);
+	MainGameState(GameSettings* settings,GameContext* context);
 	virtual ~MainGameState();
 	void init();
 	int update(float dt);
@@ -58,6 +55,7 @@ private:
 	int checkGoal(const v2& ballPos);
 
 	GameSettings* _settings;
+	GameContext* _context;
 	EnergyRing _energies[4];
 	bool _tickEnergy;
 	Bat _bat;
@@ -70,10 +68,10 @@ private:
 	v2 _settingsPos;
 	int _settingsState;
 	bool _showSettings;
-	Score _score;
 	GameMode _mode;
 	float _timer;
 	bool _showGoals;
+	bool _autoRespawn;
 	Goal _goals[4];
 };
 

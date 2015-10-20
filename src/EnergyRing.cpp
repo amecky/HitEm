@@ -14,7 +14,7 @@ void EnergyRing::draw(const v2& center) {
 	v2 size = ds::sprites::getTextSize(buffer);
 	int cx = center.x - size.x * 0.5f;
 	int cy = center.y - size.y * 0.5f;
-	ds::sprites::drawText(cx, cy, buffer);
+	ds::sprites::drawText(cx, cy, buffer,1.0f,1.0f,textColor);
 		
 	for (uint32 i = 0; i < steps; ++i) {
 		float x = center.x + cos(angle) * r1;
@@ -31,6 +31,13 @@ void EnergyRing::draw(const v2& center) {
 }
 
 bool EnergyRing::tick(float dt) {
+	if (flashTimer > 0.0f) {
+		flashTimer -= dt;
+	}
+	textColor.r = 1.0f - flashTimer;
+	textColor.g = 1.0f - flashTimer;
+	textColor.b = 1.0f - flashTimer;
+
 	timer += dt;
 	if (timer >= 1.0f) {
 		timer -= 1.0f;
@@ -47,4 +54,8 @@ void EnergyRing::inc(int v) {
 	if (value > 100) {
 		value = 100;
 	}
+}
+
+void EnergyRing::flash(float ttl) {
+	flashTimer = ttl;
 }

@@ -9,9 +9,9 @@ const v2 RING_POSITIONS[] = {
 	v2(940,  80) // yellow
 };
 
-MainGameState::MainGameState(GameSettings* settings) : ds::GameState("MainGame"), _settings(settings) {
+MainGameState::MainGameState(GameSettings* settings,GameContext* context) : ds::GameState("MainGame"), _settings(settings) , _context(context) {
 	_bat.position = v2(512, 384);
-	_bat.texture = ds::math::buildTexture(375, 63, 52, 52);
+	_bat.texture = ds::math::buildTexture(340, 0, 50, 50);
 	_trails = new Trails(_settings);
 	_state = 1;
 	_startPos = v2(20, 580);
@@ -21,6 +21,7 @@ MainGameState::MainGameState(GameSettings* settings) : ds::GameState("MainGame")
 	_showGoals = true;
 	_tickEnergy = true;
 	_showBalls = true;
+	_autoRespawn = true;
 	_goals[0].init(v2(160, 384), GO_HORIZONTAL);
 	_goals[1].init(v2(512, 740), GO_VERTICAL);
 	_goals[2].init(v2(870, 384), GO_HORIZONTAL);
@@ -52,10 +53,11 @@ void MainGameState::activate() {
 	createBall(1);
 	createBall(2);
 	createBall(3);
-	_score.correct = 0;
-	_score.wrong = 0;
+	_context->resetScore();
 	_mode = GM_PREPARING;
 	_timer = 0.0f;
+	_context->timer.reset();
+	_context->timer.start();
 }
 
 // -------------------------------------------------------
@@ -95,6 +97,8 @@ int MainGameState::update(float dt) {
 	}
 	else {
 
+		_context->timer.tick(dt);
+
 		moveBalls(dt);
 
 		for (int i = 0; i < 4; ++i) {
@@ -103,27 +107,42 @@ int MainGameState::update(float dt) {
 				if (ret != -1) {
 					if (ret == i) {
 						LOG << "--> correct one!";
-						++_score.correct;
-						_energies[i].value += 5;
+						++_context->score.goals;
+						_energies[i].inc(5);
+						_energies[i].flash(1.5f);
 					}
 					else {
-						++_score.wrong;
+						++_context->score.wrongGoals;
 					}
-					//respawn(i);
-					_balls[i].mode = BM_STICKY;
+					if (_autoRespawn) {
+						respawn(i);
+					}
+					else {
+						_balls[i].mode = BM_STICKY;
+					}
 				}
 			}
 		}
-
-		// check if ALL energies are <= 0
-
-		_trails->update(dt);
 
 		if (_tickEnergy) {
 			for (int i = 0; i < 4; ++i) {
 				_energies[i].tick(dt);
 			}
 		}
+		// check if ALL energies are <= 0
+		int cnt = 0;
+		for (int i = 0; i < 4; ++i) {
+			if (_energies[i].value <= 0) {
+				++cnt;
+			}
+		}
+		if (cnt == 4) {
+			_context->timer.stop();
+			return 1;
+		}
+
+		_trails->update(dt);
+		
 	}
 	return 0;
 }
@@ -300,6 +319,9 @@ void MainGameState::createBall(int colorIndex) {
 int MainGameState::onChar(int ascii) {
 	if (ascii == 's') {
 		_showSettings = !_showSettings;
+	}
+	if (ascii == 'e') {
+		return 1;
 	}
 	return 0;
 }

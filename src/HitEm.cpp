@@ -31,13 +31,18 @@ bool HitEm::loadContent() {
 	gui::initialize();
 	settings::load(_gameSettings);
 	initializeGUI();
-	stateMachine->add(new MainGameState(_gameSettings));
+	stateMachine->add(new MainGameState(_gameSettings,_context));
 	stateMachine->add(new GameOverState(&gui,_context));
 	stateMachine->connect("GameOver", 1, "MainGame");
+	stateMachine->connect("MainGame", 1, "GameOver");
 	return true;
 }
 
 void HitEm::init() {
+	// for testing
+	_context->timer.reset();
+	_context->score.goals = 100;
+	_context->score.wrongGoals = 20;
 	stateMachine->activate("GameOver");
 }
 

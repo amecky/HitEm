@@ -3,9 +3,13 @@
 - [ ] flash color of text inside energy ring when value incremented
 - [ ] add border import impact effect
 - [ ] scoring particle effect
-- [ ] check if all energies are 0 and then game over
-- [ ] add game over state
-- [ ] calculate score: 1000 * correct goals - 100 * wrong goals + (Time - 100) * 1000 
+- [ ] should the number of wrong goals be subtracted from final score?
+
+## 20.10.2015
+- [x] check if all energies are 0 and then game over
+- [x] add timer and take time how long is playing
+- [x] add game over state
+- [x] calculate score: 1000 * correct goals - 100 * wrong goals + (Time - 100) * 1000 
 
 ## 19.10.2015
 - [x] "get ready" should fade out
