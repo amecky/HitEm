@@ -11,7 +11,7 @@ const v2 RING_POSITIONS[] = {
 
 MainGameState::MainGameState(GameSettings* settings,GameContext* context) : ds::GameState("MainGame"), _settings(settings) , _context(context) {
 	_bat.position = v2(512, 384);
-	_bat.texture = ds::math::buildTexture(340, 0, 50, 50);
+	_bat.texture = ds::math::buildTexture(340, 52, 50, 50);
 	_trails = new Trails(_settings);
 	_state = 1;
 	_startPos = v2(20, 580);
